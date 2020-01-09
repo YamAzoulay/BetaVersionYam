@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "211481532457",
+    "firebase_url": "https://betaversionyam-230fa.firebaseio.com",
+    "project_id": "betaversionyam-230fa",
+    "storage_bucket": "betaversionyam-230fa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211481532457:android:ffc43d4e31e0ddf3bca438",
+        "android_client_info": {
+          "package_name": "com.example.betaversionyam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "211481532457-58skrb64eof91lat70kckqg2jo0ajacm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.betaversionyam",
+            "certificate_hash": "9bfa51f386115e339ab14c2efe966bee39e020dc"
+          }
+        },
+        {
+          "client_id": "211481532457-jd6a5vuo6le9ktrj7qhge8oq8fectlsp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCERsOtefsZCsAonwF-yvZ5NNqTeTwFCII"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "211481532457-jd6a5vuo6le9ktrj7qhge8oq8fectlsp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
