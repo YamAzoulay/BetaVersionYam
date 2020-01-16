@@ -27,18 +27,15 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 
 import static com.example.betaversionyam.FBref.refAuth;
-import static com.example.betaversionyam.FBref.refManagers;
 import static com.example.betaversionyam.FBref.refUsers;
-import static com.example.betaversionyam.FBref.refWorkers;
-//import static com.example.betaversionyam.FBref.refUsers;
 
 public class regAndLoginActivity extends AppCompatActivity {
 
-    TextView tVtitle, tVregister, tVworker;
+    TextView tVtitle, tVregister, tVworker, tVmanager;
     EditText eTname, eTphone, eTemail, eTpass;
     CheckBox cBstayconnect;
     Button btn;
-    Switch sManager;
+    Switch Switch;
 
     String name, phone, email, password, uid;
     Users userdb;
@@ -59,7 +56,8 @@ public class regAndLoginActivity extends AppCompatActivity {
         cBstayconnect = findViewById(R.id.cBstayconnect);
         tVregister = findViewById(R.id.tVregister);
         tVworker = findViewById(R.id.textView2);
-        sManager = findViewById(R.id.switch1);
+        Switch = findViewById(R.id.switch1);
+        tVmanager = findViewById(R.id.textView3);
         btn = findViewById(R.id.btn);
 
         stayConnect = false;
@@ -73,7 +71,8 @@ public class regAndLoginActivity extends AppCompatActivity {
             eTname.setVisibility(View.VISIBLE);
             eTphone.setVisibility(View.VISIBLE);
             tVworker.setVisibility(View.VISIBLE);
-            sManager.setVisibility(View.VISIBLE);
+            Switch.setVisibility(View.VISIBLE);
+            tVmanager.setVisibility(View.VISIBLE);
             btn.setText("Register");
             registered = false;
             logoption();
@@ -108,7 +107,8 @@ public class regAndLoginActivity extends AppCompatActivity {
                 eTname.setVisibility(View.VISIBLE);
                 eTphone.setVisibility(View.VISIBLE);
                 tVworker.setVisibility(View.VISIBLE);
-                sManager.setVisibility(View.VISIBLE);
+                Switch.setVisibility(View.VISIBLE);
+                tVmanager.setVisibility(View.VISIBLE);
                 btn.setText("Register");
                 registered = false;
                 logoption();
@@ -180,13 +180,13 @@ public class regAndLoginActivity extends AppCompatActivity {
                                 Log.d("MainActivity", "createUserWithEmail:success");
                                 FirebaseUser user = refAuth.getCurrentUser();
                                 uid = user.getUid();
-                                if (sManager.isChecked()) {
+                                if (Switch.isChecked()) {
                                     status = true;
                                 }
                                 else status = false;
                                 userdb = new Users(name, email, phone, uid);
-                                if (status) refUsers.child("Managers").child(name).setValue(userdb);
-                                else refUsers.child("Workers").child(name).setValue(userdb);
+                                if (status) refUsers.child("Workers").child(name).setValue(userdb);
+                                else refUsers.child("Managers").child(name).setValue(userdb);
                                 Toast.makeText(regAndLoginActivity.this, "Successful registration", Toast.LENGTH_LONG).show();
                                 Intent si = new Intent(regAndLoginActivity.this, CreditsActivity.class);
                                 startActivity(si);
