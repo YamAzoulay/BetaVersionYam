@@ -1,15 +1,20 @@
 package com.example.betaversionyam;
 
+import androidx.annotation.NonNull;
+
 public class Users {
         private String name, email, phone, uid;
+        private boolean isWorker;
 
 
         public Users (){}
-        public Users (String name, String email, String phone, String uid) {
+
+        public Users (String name, String email, String phone, String uid, boolean isWorker) {
             this.name=name;
             this.email=email;
             this.phone=phone;
-            this.uid=uid;
+            this.uid = uid;
+            this.isWorker = isWorker;
         }
 
         public String getName() {
@@ -34,13 +39,16 @@ public class Users {
 
         public void setPhone(String phone) { this.phone=phone; }
 
+        public boolean getIsWorker(){ return isWorker;}
+
+        public void setIsWorker(){ this.isWorker = isWorker;}
+
         public String getUid() {
             return uid;
         }
 
         public void setUid(String uid) {
-            this.uid=uid;
+            this.uid = uid;
         }
-
 }
 

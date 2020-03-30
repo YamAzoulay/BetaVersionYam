@@ -10,21 +10,12 @@ import android.view.View;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
-    boolean isRegistered = false;
     Intent t;
-    boolean stayConnect;
-
-    public static FirebaseAuth refAuth = FirebaseAuth.getInstance();
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        t=new Intent(this,regAndLoginActivity.class);
+        t=new Intent(this,AuthActivity.class);
         startActivity(t);
-    }
-
-    public void move(View view) {
     }
 }

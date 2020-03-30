@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
@@ -17,7 +16,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -123,12 +121,13 @@ public class WorkerActivity extends AppCompatActivity {
         ArrayList<String> stringsArrayList = distribution.getSelectedUsersList();
         String name = distribution.getName();
         String dateAndTime = distribution.getDateAndTime();
-        ArrayList<Location> locationArrayList = distribution.getArea().getLocationList();
+        Area area = distribution.getArea();
+        ArrayList<LatAndLng> latAndLngs = area.getLatAndLngArrayList();
         Intent t = new Intent(this, ActiveDistributionActivity.class);
         t.putExtra("selectedUsers", stringsArrayList);
         t.putExtra("name", name);
         t.putExtra("dateAndTime", dateAndTime);
-        t.putExtra("area", locationArrayList);
+        t.putExtra("area", latAndLngs);
         startActivityForResult(t, 500);
     }
 }

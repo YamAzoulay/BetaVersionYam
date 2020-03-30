@@ -4,10 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    tools:context=".WorkerActivity">
-
+    android:gravity="center"
+    tools:context=".ManagerActivity">
     <Space
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -18,8 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:onClick="connectDis"
-        android:text="connect to a new distribution" />
+        android:onClick="newDis"
+        android:text="new distribution" />
 
     <Space
         android:layout_width="match_parent"
@@ -31,12 +30,12 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="Last Distributions"
+        android:text="All Distributions"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="@android:color/black" />
 
     <ListView
-        android:id="@+id/listView1"
+        android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="7">
@@ -47,4 +46,5 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
 </LinearLayout>

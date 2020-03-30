@@ -1,0 +1,95 @@
+package com.example.betaversionyam;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+
+import static com.example.betaversionyam.FBref.refUsers;
+
+public class AddUsersActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+    ArrayList<Users> UsersList = new ArrayList<>();
+    ArrayList<String> UsersStringList = new ArrayList<>();
+    ArrayList<String> SelectedUsersList = new ArrayList<>();
+    ListView lv;
+    ValueEventListener usersListener;
+    ArrayAdapter adp;
+    Users user;
+    String userString, selectedWorkers="";
+    TextView textView;
+    Intent gi = new Intent();
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_users);
+        lv = findViewById(R.id.listView);
+        textView = findViewById(R.id.textView);
+        lv.setOnItemClickListener(this);
+        lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        usersListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                UsersList.clear();
+                UsersStringList.clear();
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    user = data.getValue(Users.class);
+                    UsersList.add(user);
+                    userString = data.getKey();
+                    UsersStringList.add(userString);
+                }
+                adp = new ArrayAdapter<>(AddUsersActivity.this, R.layout.support_simple_spinner_dropdown_item, UsersStringList);
+                lv.setAdapter(adp);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        refUsers.child("Workers").addValueEventListener(usersListener);
+
+    }
+
+    public void select(View view) {
+        if (!SelectedUsersList.isEmpty()) {
+            gi.putExtra("selectedWorkers", SelectedUsersList);
+            setResult(RESULT_OK, gi);
+            finish();
+        }
+    }
+
+    public void getBack(View view) {
+        Intent t = new Intent(this, newDistribution.class);
+        startActivity(t);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if (!UsersStringList.isEmpty() && selectedWorkers.contains(UsersStringList.get(position))){
+                SelectedUsersList.remove(position);
+                selectedWorkers = TextUtils.join( ", " , SelectedUsersList);
+                textView.setText(selectedWorkers);
+            }
+        else {
+            SelectedUsersList.add(UsersStringList.get(position));
+            selectedWorkers = TextUtils.join( ", " , SelectedUsersList);
+            textView.setText(selectedWorkers);
+        }
+    }
+}
