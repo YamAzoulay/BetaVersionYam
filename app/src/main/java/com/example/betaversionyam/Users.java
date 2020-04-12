@@ -1,11 +1,17 @@
 package com.example.betaversionyam;
 
-import androidx.annotation.NonNull;
+/**
+ * @author		Yam Azoulay
+ * @version	    1.0
+ * @since		13/02/2020
+ *
+ * this java class allows to create a new Item named Users. Used to save all the required details of the users of the application.
+ */
 
 public class Users {
+
         private String name, email, phone, uid;
         private boolean isWorker;
-
 
         public Users (){}
 

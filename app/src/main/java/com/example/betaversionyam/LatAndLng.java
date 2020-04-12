@@ -2,6 +2,14 @@ package com.example.betaversionyam;
 
 import java.io.Serializable;
 
+/**
+ * @author		Yam Azoulay
+ * @version	    1.0
+ * @since		13/02/2020
+ *
+ * this java class allows to create a new Item named LatAndLng. Used to save the latitude and longitude of a location
+ *
+ */
 public class LatAndLng implements Serializable {
     private Double lat;
     private Double lng;

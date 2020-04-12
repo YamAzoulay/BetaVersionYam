@@ -1,14 +1,13 @@
 package com.example.betaversionyam;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -17,20 +16,26 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.LinkedList;
 
 import static com.example.betaversionyam.FBref.refDis;
 
+/**
+ * @author		Yam Azoulay
+ * @version	    1.0
+ * @since		26/02/2020
+ *
+ * In this activity the manager can create a new distribution.
+ */
 public class newDistribution extends AppCompatActivity implements Serializable {
     static final String TAG = "newDistribution";
     ArrayList<String> SelectedUsersList = new ArrayList<>();
-    TextView textViewDate, textViewTime, textViewSumUsers;
+    TextView textViewDate, textViewTime, textViewSumUsers, tvTextTime, tvTextDate, tvMap;
     DatePickerDialog.OnDateSetListener datePickerDialog;
     TimePickerDialog.OnTimeSetListener timePickerDialog;
     ArrayList<LatAndLng> latAndLngArrayList;
@@ -53,11 +58,19 @@ public class newDistribution extends AppCompatActivity implements Serializable {
         textViewDate = findViewById(R.id.tvDate);
         textViewTime = findViewById(R.id.tvTime);
         mapButton = findViewById(R.id.mapButton);
+        tvTextDate = findViewById(R.id.tvTextDate);
+        tvTextTime = findViewById(R.id.tvTextTime);
+        tvMap = findViewById(R.id.textViewMap);
 
         calendar = Calendar.getInstance();
         setDate();
         setTime();
     }
+
+    /**
+     * this function is called when the manager clicks on the text view of the date, in order to select the date of the distribution.
+     * the function opens a date picker dialog and the manager selects the date.
+     */
 
     private void setDate(){
         textViewDate.setOnClickListener(new View.OnClickListener() {
@@ -86,11 +99,15 @@ public class newDistribution extends AppCompatActivity implements Serializable {
                 dayAndMonth = String.format("%02d/%02d", day, month);
                 Log.d(TAG, "onDateSet: dd/mm/yyyy: " + dayAndMonth + "/" + year);
                 String date = day + "/" + month + "/" + year;
-                textViewDate.setText(date);
+                tvTextDate.setText(date);
             }
         };
     }
 
+    /**
+     * this function is called when the manager clicks on the text view of the time, in order to select the time of the distribution.
+     * the function opens a time picker dialog and the manager selects the time.
+     */
     private void setTime() {
         textViewTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,26 +126,29 @@ public class newDistribution extends AppCompatActivity implements Serializable {
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 hour = hourOfDay;
                 min = minute;
-                Log.d(TAG, "onTimeSet: hh/mm: " + hour + "/" + min);
                 selectedTime = String.format("%02d:%02d", hour, min);
-                textViewTime.setText(selectedTime);
+                tvTextTime.setText(selectedTime);
             }
         };
     }
 
+    /**
+     * this function is called when the manager finished to enter all the details and wants to create the distribution.
+     * the function checks that the input is well and uploads the details to the database.
+     */
+
     public void applyNewDis(View view) {
 
-        dateAndTime = "" + year + "/" + dayAndMonth + selectedTime;
-        Toast.makeText(this, dateAndTime, Toast.LENGTH_LONG).show();
+        dateAndTime =  dayAndMonth + "/" + year + selectedTime;
         name = editText.getText().toString();
-        if (name == null) editText.setError("select a name");
-        else {
+
+        if (checkInput()) {
             distribution = new Distribution(dateAndTime, name, SelectedUsersList, area, true);
             refDis.child(name).setValue(distribution);
             Intent t = new Intent(this, ManagerActivity.class);
             startActivity(t);
         }
-}
+    }
 
     public void moveToMap(View view) {
         Intent si = new Intent(this, MapActivity.class);
@@ -140,6 +160,10 @@ public class newDistribution extends AppCompatActivity implements Serializable {
         startActivityForResult(si,100);
     }
 
+    /**
+     * this function is called when the user return from the activity to choose workers or from the activity to choose an area.
+     * the function detects when the manager came back from and saves the information from that activity.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (data != null && requestCode == 100) {
@@ -150,9 +174,28 @@ public class newDistribution extends AppCompatActivity implements Serializable {
         if (data != null && requestCode == 200) {
             latAndLngArrayList = (ArrayList<LatAndLng>) data.getExtras().getSerializable("selectedArea");
             area = new Area(latAndLngArrayList);
-            mapButton.setTextColor(Color.rgb(0,255,0));
+            tvMap.setText("successful");
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    /**
+     * this function checks if the manager entered all of the details that required to open a new distribution.
+     */
+    public boolean checkInput(){
+        if (name.isEmpty()) editText.setError("select a name");
+        else
+            if (SelectedUsersList.isEmpty()) Toast.makeText(this, "you must select workers", Toast.LENGTH_SHORT).show();
+            else
+                if (selectedTime==null) tvTextTime.setError("you must select time");
+                else
+                    if (dayAndMonth==null) tvTextDate.setError("you must select date");
+                    else
+                        if (latAndLngArrayList == null)
+                        Toast.makeText(this, "you must select an area", Toast.LENGTH_SHORT).show();
+                        else return true;
+        return false;
+    }
+
 
 }

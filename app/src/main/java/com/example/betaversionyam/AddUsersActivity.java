@@ -1,8 +1,5 @@
 package com.example.betaversionyam;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -12,6 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -20,6 +20,14 @@ import java.util.ArrayList;
 
 import static com.example.betaversionyam.FBref.refUsers;
 
+
+/**
+ * @author		Yam Azoulay
+ * @version	    1.0
+ * @since		05/03/2020
+ *
+ * In this activity the manager choose the workers of the distribution.
+ */
 public class AddUsersActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     ArrayList<Users> UsersList = new ArrayList<>();
     ArrayList<String> UsersStringList = new ArrayList<>();
@@ -32,7 +40,10 @@ public class AddUsersActivity extends AppCompatActivity implements AdapterView.O
     TextView textView;
     Intent gi = new Intent();
 
-
+    /**
+     * the function makes a connection between the variables in the java to the xml components
+     * and find all of the registered workers and shows them on a list view.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +90,10 @@ public class AddUsersActivity extends AppCompatActivity implements AdapterView.O
         startActivity(t);
     }
 
+    /**
+     * this function is called when the manager clicks on an item of the listView.
+     * the manager can decide who are the workers that work in this distribution.
+     */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (!UsersStringList.isEmpty() && selectedWorkers.contains(UsersStringList.get(position))){

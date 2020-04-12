@@ -1,32 +1,27 @@
 package com.example.betaversionyam;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import androidx.annotation.NonNull;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
@@ -39,19 +34,21 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-
-import javax.xml.transform.Result;
-
 import static com.example.betaversionyam.FBref.refUsers;
+
+/**
+ * @author		Yam Azoulay
+ * @version	    1.0
+ * @since		13/02/2020
+ *
+ * Authentication activity, any user needs to register or log in to move on.
+ */
 
 public class AuthActivity extends AppCompatActivity {
     TextView tvTitle, tvRegister, tvManager, tvWorker;
     EditText etName, etPhone, etEmail, etCode;
     CheckBox cbStayConnect;
-    Button btn;
     Switch aSwitch;
     public static FirebaseAuth refAuth=FirebaseAuth.getInstance();
     ValueEventListener usersListener;
@@ -64,6 +61,8 @@ public class AuthActivity extends AppCompatActivity {
     Boolean mVerificationInProgress = false;
     FirebaseUser user;
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
+    ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +77,6 @@ public class AuthActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         cbStayConnect = findViewById(R.id.cbStayConnect);
         aSwitch = findViewById(R.id.switch1);
-        btn = findViewById(R.id.buttonPolygon);
         stayConnect = false;
         registered = false;
 
@@ -103,6 +101,12 @@ public class AuthActivity extends AppCompatActivity {
         if (stayConnect) finish();
     }
 
+    /**
+     * this function is called when the user is in the register option but he needs to log in.
+     * the function "changes" the screen for the login option
+     */
+
+
     private void logOption() {
         tvTitle.setText("Login");
         etName.setVisibility(View.INVISIBLE);
@@ -110,7 +114,6 @@ public class AuthActivity extends AppCompatActivity {
         aSwitch.setVisibility(View.INVISIBLE);
         tvWorker.setVisibility(View.INVISIBLE);
         tvManager.setVisibility(View.INVISIBLE);
-        btn.setText("Login");
         registered=true;
 
 
@@ -128,6 +131,11 @@ public class AuthActivity extends AppCompatActivity {
         tvRegister.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    /**
+     * this function is called when the user is in the log option but he needs to register.
+     * the function "change" the screen for the register option.
+     */
+
     private void regOption() {
         tvTitle.setText("Register");
         etName.setVisibility(View.VISIBLE);
@@ -136,7 +144,6 @@ public class AuthActivity extends AppCompatActivity {
         tvWorker.setVisibility(View.VISIBLE);
         tvManager.setVisibility(View.VISIBLE);
         etEmail.setVisibility(View.VISIBLE);
-        btn.setText("Register");
 
         SpannableString ss = new SpannableString("Already have an account?  Login here!");
         ClickableSpan span = new ClickableSpan() {
@@ -152,29 +159,42 @@ public class AuthActivity extends AppCompatActivity {
         tvRegister.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    /**
+     * this function is called when the user clicks on the button (register / login ).
+     * the function checks if the user is registered, if yes, he logs in using phone number auth
+     * if not, he registers and his info uploads to firebase database.
+
+     */
+
 
     public void logOrReg(View view) {
         if (registered){
             phone = etPhone.getText().toString();
-            startPhoneNumberVerification(phone);
-            onVerificationStateChanged();
-            AlertDialog.Builder adb = new AlertDialog.Builder(this);
-            final EditText edittext = new EditText(this);
-            adb.setMessage("enter the code");
-            adb.setTitle("Authentication");
-            adb.setView(edittext);
-            adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    code = edittext.getText().toString();
-                    verifyPhoneNumberWithCode(mVerificationId ,code);
-                }
-            });
-            adb.setNegativeButton("BACK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                }
-            });
-            ad = adb.create();
-            ad.show();
+            if (phone.isEmpty()) etPhone.setError("you must enter a phone number");
+            else {
+                startPhoneNumberVerification(phone);
+                onVerificationStateChanged();
+                ProgressDialog.show(this, "login", "connecting.. ", true);
+                AlertDialog.Builder adb = new AlertDialog.Builder(this);
+                final EditText edittext = new EditText(this);
+                edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
+                adb.setMessage("enter the code");
+                adb.setTitle("Authentication");
+                adb.setView(edittext);
+                adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        code = edittext.getText().toString();
+                        if (!code.isEmpty())
+                            verifyPhoneNumberWithCode(mVerificationId, code);
+                    }
+                });
+                adb.setNegativeButton("BACK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                });
+                ad = adb.create();
+                ad.show();
+            }
         }
         else{
             name = etName.getText().toString();
@@ -196,6 +216,13 @@ public class AuthActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * this function is called when the user wants to login.
+     * the function sends sms to his phone number with a verification code.
+     *
+     * @param	phoneNumber the phone number of the user. The SMS is sent to this phone number.
+     */
+
     private void startPhoneNumberVerification(String phoneNumber) {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
@@ -206,11 +233,23 @@ public class AuthActivity extends AppCompatActivity {
         mVerificationInProgress = true;
     }
 
+    /**
+     * this function is called to check if the code the user wrote is the code he received and create a credential.
+     * if he wrote a right code, "signInWithPhoneAuthCredential" function is called.
+     * @param	code the code that the
+     * @param verificationId a verification identity to connect with firebase servers.
+     */
     private void verifyPhoneNumberWithCode(String verificationId, String code) {
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
         signInWithPhoneAuthCredential(credential);
     }
 
+
+    /**
+     * this function is called to sign in the user.
+     * if the credential is proper the user is signs in and he sent to the next activity, depends on his status (worker or manager)
+     * @param	credential a credential that everything was right and he can sign in.
+     */
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         refAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -218,7 +257,6 @@ public class AuthActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithCredential:success");
-                            Toast.makeText(AuthActivity.this, "Successful login", Toast.LENGTH_SHORT).show();
                             SharedPreferences settings = getSharedPreferences("PREFS_NAME", MODE_PRIVATE);
                             SharedPreferences.Editor editor = settings.edit();
                             editor.putBoolean("stayConnect", cbStayConnect.isChecked());
@@ -233,9 +271,7 @@ public class AuthActivity extends AppCompatActivity {
                                 else
                                     refUsers.child("Managers").child(name).child("uid").setValue(uid);
                             }
-
                             setUsersListener();
-
                         }
 
                         else {
@@ -246,6 +282,9 @@ public class AuthActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * this function checks the status of the verification, if it's completed, failed or inProgress.
+     */
     private void onVerificationStateChanged() {
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
@@ -273,6 +312,11 @@ public class AuthActivity extends AppCompatActivity {
         };
     }
 
+    /**
+     * this function connect the current user with his information in the database by checking his uid,
+     * in purpose to check his status and sent him to the right activity.
+     */
+
     public void setUsersListener() {
         user = refAuth.getCurrentUser();
         usersListener = new ValueEventListener() {
@@ -281,6 +325,7 @@ public class AuthActivity extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     if (user.getUid().equals(data.getValue(Users.class).getUid())){
                         currentUser=data.getValue(Users.class);
+                        if (progressDialog!=null) progressDialog.dismiss();
                         if (currentUser.getIsWorker()){
                             Intent si = new Intent(AuthActivity.this, WorkerActivity.class);
                             startActivity(si);
@@ -294,6 +339,7 @@ public class AuthActivity extends AppCompatActivity {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                if (progressDialog!=null) progressDialog.dismiss();
             }
         };
         refUsers.child("Managers").addValueEventListener(usersListener);

@@ -1,13 +1,17 @@
 package com.example.betaversionyam;
 
-import androidx.annotation.NonNull;
+import android.os.Bundle;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+/**
+ * @author		Yam Azoulay
+ * @version	    1.0
+ * @since		13/02/2020
+ *
+ * credits activity
+ */
 
 public class CreditsActivity extends AppCompatActivity {
     @Override
@@ -15,5 +19,9 @@ public class CreditsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_credits);
 
+    }
+
+    public void finished(View view) {
+        finish();
     }
 }

@@ -2,6 +2,13 @@ package com.example.betaversionyam;
 
 import java.util.ArrayList;
 
+/**
+ * @author		Yam Azoulay
+ * @version	    1.0
+ * @since		13/02/2020
+ *
+ * this java class allows to create a new Item named Distribution. Used to save all of the details of any distribution.
+ */
 public class Distribution {
     private String dateAndTime;
     private String name;

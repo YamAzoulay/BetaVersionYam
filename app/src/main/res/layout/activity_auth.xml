@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/green_background"
     android:orientation="horizontal"
     tools:context=".AuthActivity">
+
     <Space
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -23,13 +24,14 @@
             android:layout_weight="0.5" />
 
         <TextView
+            android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:id="@+id/tvTitle"
-            android:text="Login"
             android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:text="Login"
+            android:textColor="#000000"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -49,6 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Manager"
+                android:textColor="#000000"
                 android:visibility="invisible" />
 
             <Switch
@@ -56,8 +59,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:textOff="Manager"
-                android:textOn="Worker"
                 android:visibility="invisible" />
 
             <TextView
@@ -66,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Worker"
-                android:textColor="@android:color/black"
+                android:textColor="#000000"
                 android:visibility="invisible" />
         </LinearLayout>
 
@@ -80,10 +81,10 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:visibility="invisible"
             android:ems="10"
             android:hint="name"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:visibility="invisible" />
 
         <Space
             android:layout_width="match_parent"
@@ -91,15 +92,15 @@
             android:layout_weight="0.5" />
 
 
-            <EditText
-                android:id="@+id/etPhone"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="phone"
-                android:inputType="phone"
-                android:visibility="visible" />
+        <EditText
+            android:id="@+id/etPhone"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="phone"
+            android:inputType="phone"
+            android:visibility="visible" />
 
         <Space
             android:layout_width="match_parent"
@@ -154,9 +155,9 @@
                 android:id="@+id/buttonPolygon"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="5"
-                android:onClick="logOrReg"
-                android:text="Login" />
+                android:layout_weight="2"
+                android:background="@drawable/arrow_right"
+                android:onClick="logOrReg" />
 
             <Space
                 android:layout_width="0dp"

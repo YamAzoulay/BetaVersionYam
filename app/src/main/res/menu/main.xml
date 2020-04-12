@@ -2,17 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menuDistribution"
-        android:title="new Distribution"
-        android:orderInCategory="100" />
-    <item
-        android:id="@+id/menuManager"
-        android:title="Manager Activity"
-        android:orderInCategory="200" />
-    <item
-        android:id="@+id/menuWorker"
-        android:title="Worker Activity"
-        android:orderInCategory="300" />
-
-
+        android:id="@+id/credits"
+        android:title="Credits"
+        android:orderInCategory="100"
+        />
 </menu>
