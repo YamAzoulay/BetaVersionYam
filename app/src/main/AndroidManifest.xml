@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">
-        <activity android:name=".WorkerMapActivity"></activity>
+        <activity android:name=".ManagerMapActivity"></activity>
+        <activity android:name=".WorkerMapActivity" />
         <activity android:name=".ActiveDistributionActivity" />
         <activity android:name=".AuthActivity" />
         <activity android:name=".AddUsersActivity" />

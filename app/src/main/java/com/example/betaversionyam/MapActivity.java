@@ -1,6 +1,8 @@
 package com.example.betaversionyam;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -42,9 +45,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        SupportMapFragment supportMapFragment = (SupportMapFragment)
-                getSupportFragmentManager().findFragmentById(R.id.map); //initialize the map
-        supportMapFragment.getMapAsync(MapActivity.this);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]
+                    {Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+            Toast.makeText(this, "you must allow the permission", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        else{
+            SupportMapFragment supportMapFragment = (SupportMapFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.map);
+            supportMapFragment.getMapAsync(MapActivity.this);
+        }
+
     }
 
 

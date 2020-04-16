@@ -23,6 +23,8 @@ public class ActiveDistributionActivity extends AppCompatActivity {
     TextView tvName, tvDate, tvTime, tvSelectedUsers, tvActive;
     Intent back;
     ArrayList<LatAndLng> latAndLngArrayList;
+    ArrayList<String> stringArrayList;
+    String name, dateAndTime, date, time, stringSelectedUsers, workerName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +45,7 @@ public class ActiveDistributionActivity extends AppCompatActivity {
         back = getIntent();
         if (back == null) Toast.makeText(this, "no distribution was found", Toast.LENGTH_SHORT).show();
         else {
-            ArrayList<String> stringArrayList;
-            String name, dateAndTime, date, time, stringSelectedUsers;
+            workerName = back.getStringExtra("workerName");
             stringArrayList = back.getStringArrayListExtra("selectedUsers");
             name = back.getStringExtra("name");
             dateAndTime = back.getStringExtra("dateAndTime");
@@ -70,6 +71,8 @@ public class ActiveDistributionActivity extends AppCompatActivity {
     public void GoToMap(View view) {
         Intent t = new Intent(this, WorkerMapActivity.class);
         t.putExtra("area" , latAndLngArrayList);
+        t.putExtra("name" , name );
+        t.putExtra("workerName", workerName);
         startActivityForResult(t,555);
     }
 }

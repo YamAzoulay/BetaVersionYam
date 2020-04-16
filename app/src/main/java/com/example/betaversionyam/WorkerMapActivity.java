@@ -35,6 +35,8 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
+import static com.example.betaversionyam.FBref.refDis;
+
 /**
  * @author		Yam Azoulay
  * @version	    1.0
@@ -53,10 +55,11 @@ public class WorkerMapActivity extends AppCompatActivity implements OnMapReadyCa
     ArrayList<Marker> markerArrayList = new ArrayList<>();
     Polygon polygon;
     int i = 0;
-    boolean toMove = true;
+    boolean toMove = true, isCurrenLoc = false;
+    String name, workerName;
 
     /**
-     * the function makes a connection between the variables in the java to the xml components,
+     * the function makes a connection between the variables in java to the xml components,
      * initialize the map, asks for permissions and find the current location.
      * */
     @Override
@@ -64,18 +67,27 @@ public class WorkerMapActivity extends AppCompatActivity implements OnMapReadyCa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_worker_map);
         t=getIntent();
-        SupportMapFragment supportMapFragment = (SupportMapFragment)
-                getSupportFragmentManager().findFragmentById(R.id.workerMap);
-        supportMapFragment.getMapAsync(WorkerMapActivity.this);
+
+        Toast.makeText(this, "it may take a few seconds", Toast.LENGTH_SHORT).show();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]
+                    {Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+            Toast.makeText(this, "you must allow the permission", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        else{
+            SupportMapFragment supportMapFragment = (SupportMapFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.workerMap);
+            supportMapFragment.getMapAsync(WorkerMapActivity.this);
+        }
+
+
 
         fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(this);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]
-                    {Manifest.permission.ACCESS_FINE_LOCATION}, 101);
-            return;
-        }
+
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
         LocationRequest mLocationRequest = LocationRequest.create();
@@ -108,6 +120,14 @@ public class WorkerMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
+    @Override
+    public void onPause() {
+        locationManager.removeUpdates(this);
+        if (isCurrenLoc)
+            refDis.child(name).child("currentLocation").child(workerName).removeValue();
+        super.onPause();
+    }
+
     /**
      * this function is called when the map is ready.
      * the function creates the same polygon as the manager created.
@@ -119,6 +139,8 @@ public class WorkerMapActivity extends AppCompatActivity implements OnMapReadyCa
         gMap.moveCamera(CameraUpdateFactory.zoomBy(16));
 
         latAndLngArrayList = (ArrayList<LatAndLng>) t.getExtras().getSerializable("area");
+        name = t.getStringExtra("name");
+        workerName = t.getStringExtra("workerName");
 
         if (latAndLngArrayList != null) {
             while (i < latAndLngArrayList.size()) {
@@ -146,6 +168,7 @@ public class WorkerMapActivity extends AppCompatActivity implements OnMapReadyCa
         if (markerArrayList != null) markerArrayList.clear();
         mlocation = location;
         LatLng latLng = new LatLng(mlocation.getLatitude(), mlocation.getLongitude());
+        LatAndLng latAndLng = new LatAndLng(mlocation.getLatitude(),mlocation.getLongitude());
         if (toMove){
             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
             toMove = false;
@@ -153,6 +176,9 @@ public class WorkerMapActivity extends AppCompatActivity implements OnMapReadyCa
         MarkerOptions markerOptions = new MarkerOptions().position(latLng);
         Marker marker = gMap.addMarker(markerOptions);
         markerArrayList.add(marker);
+
+        refDis.child(name).child("currentLocation").child(workerName).setValue(latAndLng);
+        isCurrenLoc = true;
     }
 
     @Override
@@ -168,6 +194,9 @@ public class WorkerMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     public void back(View view) {
+        locationManager.removeUpdates(this);
+        if (isCurrenLoc)
+            refDis.child(name).child("currentLocation").child(workerName).removeValue();
         finish();
     }
 }

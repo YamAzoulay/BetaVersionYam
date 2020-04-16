@@ -20,20 +20,25 @@
         android:orientation="horizontal">
 
 
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8" />
+
         <Button
             android:id="@+id/buttonBack"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
             android:onClick="back"
-            android:text="back" />
+            android:text="done" />
 
-        <Button
-            android:id="@+id/button"
+        <Space
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:text="go to current location" />
+            android:layout_height="match_parent"
+            android:layout_weight="0.3" />
+
+
     </LinearLayout>
 
 </LinearLayout>

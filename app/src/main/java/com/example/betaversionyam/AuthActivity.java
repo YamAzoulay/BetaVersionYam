@@ -170,6 +170,7 @@ public class AuthActivity extends AppCompatActivity {
     public void logOrReg(View view) {
         if (registered){
             phone = etPhone.getText().toString();
+            if (!phone.startsWith("+972")) phone = "+972" + phone;
             if (phone.isEmpty()) etPhone.setError("you must enter a phone number");
             else {
                 startPhoneNumberVerification(phone);
@@ -190,6 +191,7 @@ public class AuthActivity extends AppCompatActivity {
                 });
                 adb.setNegativeButton("BACK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+                        if (progressDialog!=null) progressDialog.dismiss();
                     }
                 });
                 ad = adb.create();
@@ -200,6 +202,7 @@ public class AuthActivity extends AppCompatActivity {
             name = etName.getText().toString();
             email = etEmail.getText().toString();
             phone = etPhone.getText().toString();
+            if (!phone.startsWith("+972")) phone = "+972" + phone;
             if (aSwitch.isChecked()) status = true;
             else status = false;
             isWorker = status;

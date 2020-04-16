@@ -131,11 +131,16 @@ public class ManagerActivity extends AppCompatActivity  implements AdapterView.O
                 tv.setTextColor(Color.RED);
             }
         });
-        adb.setNeutralButton("back", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+        if (distributionArrayList.get(position).isActive()) {
+            adb.setNeutralButton("connect", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent t = new Intent(ManagerActivity.this , ManagerMapActivity.class);
+                    t.putExtra("name" , stringsArrayList.get(position));
+                    startActivityForResult(t,111);
+                }
+            });
+        }
         AlertDialog ad = adb.create();
         ad.show();
     }

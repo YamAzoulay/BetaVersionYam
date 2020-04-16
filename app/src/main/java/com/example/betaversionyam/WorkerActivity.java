@@ -43,6 +43,7 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
     String phoneOfUser, nameOfDistribution;
     public static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     Users currentUser;
+    String workerName;
 
 
     /**
@@ -65,6 +66,7 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     if (phoneOfUser.equals(data.getValue(Users.class).getPhone())) {
                         currentUser = data.getValue(Users.class);
+                        workerName = currentUser.getName();
                     }
                 }
                 disListener = new ValueEventListener() {
@@ -168,6 +170,8 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
      * @param distribution an active distribution that includes the current worker.
      */
     public void ActiveDistribution(Distribution distribution) {
+        if (usersListener!=null) refUsers.removeEventListener(usersListener);
+        if (disListener!=null) refDis.removeEventListener(disListener);
         ArrayList<String> stringsArrayList = distribution.getSelectedUsersList();
         String name = distribution.getName();
         String dateAndTime = distribution.getDateAndTime();
@@ -180,6 +184,7 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
         t.putExtra("dateAndTime", dateAndTime);
         t.putExtra("area", latAndLngs);
         t.putExtra("isActive" , isActive);
+        t.putExtra("workerName" , workerName);
         startActivityForResult(t, 500);
     }
 
