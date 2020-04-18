@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -59,8 +60,7 @@ public class ActiveDistributionActivity extends AppCompatActivity {
                 tvDate.setText("the date is  " + date);
             }
             tvName.setText(name);
-            if (isActive)             tvActive.setText("an active distribution");
-            else                      tvActive.setText("a not active distribution");
+            tvActive.setText("This distribution is active!");
             tvSelectedUsers.setText("the workers are  " + stringSelectedUsers);
         }
     }

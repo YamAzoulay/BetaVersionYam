@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -74,8 +75,9 @@ public class AddUsersActivity extends AppCompatActivity implements AdapterView.O
             }
         };
         refUsers.child("Workers").addValueEventListener(usersListener);
-
     }
+
+
 
     public void select(View view) {
         if (!SelectedUsersList.isEmpty()) {
@@ -88,6 +90,7 @@ public class AddUsersActivity extends AppCompatActivity implements AdapterView.O
     public void getBack(View view) {
         Intent t = new Intent(this, newDistribution.class);
         startActivity(t);
+        finish();
     }
 
     /**
@@ -97,9 +100,13 @@ public class AddUsersActivity extends AppCompatActivity implements AdapterView.O
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (!UsersStringList.isEmpty() && selectedWorkers.contains(UsersStringList.get(position))){
-                SelectedUsersList.remove(position);
-                selectedWorkers = TextUtils.join( ", " , SelectedUsersList);
-                textView.setText(selectedWorkers);
+                if (SelectedUsersList.size()==1)
+                    Toast.makeText(this, "you must select at least one worker", Toast.LENGTH_SHORT).show();
+                else {
+                    SelectedUsersList.remove(position);
+                    selectedWorkers = TextUtils.join(", ", SelectedUsersList);
+                    textView.setText(selectedWorkers);
+                }
             }
         else {
             SelectedUsersList.add(UsersStringList.get(position));

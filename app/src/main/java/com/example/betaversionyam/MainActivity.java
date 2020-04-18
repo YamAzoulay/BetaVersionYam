@@ -27,7 +27,7 @@ import static com.example.betaversionyam.FBref.refUsers;
 
 public class MainActivity extends AppCompatActivity {
     Intent t;
-    public static int SPLASH_TIME_OUT = 2000;
+    public static int SPLASH_TIME_OUT = 1000;
     ValueEventListener usersListener;
     FirebaseUser user;
     Users currentUser;

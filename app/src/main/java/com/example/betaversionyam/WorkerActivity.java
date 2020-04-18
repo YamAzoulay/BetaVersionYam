@@ -44,7 +44,7 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
     public static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     Users currentUser;
     String workerName;
-
+    int isDisFound = 0;
 
     /**
      * the function makes a connection between the variables in the java to the xml components
@@ -105,6 +105,13 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
         refUsers.child("Workers").addValueEventListener(usersListener);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (refUsers != null) refUsers.removeEventListener(usersListener);
+        if (refDis != null) refDis.removeEventListener(disListener);
+    }
+
 
     /**
      * this function is called when the worker clicks on an item of the listView.
@@ -152,14 +159,17 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
                     if ((distribution != null && distribution.getSelectedUsersList().contains(currentUser.getName()))
                             && (distribution.isActive())) {
                         ActiveDistribution(distribution);
+                        isDisFound = 1;
                     }
                 }
+                if (isDisFound!=1) Toast.makeText(WorkerActivity.this, "", Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         };
         refDis.addValueEventListener(disListener);
+
     }
 
 
@@ -186,6 +196,7 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
         t.putExtra("isActive" , isActive);
         t.putExtra("workerName" , workerName);
         startActivityForResult(t, 500);
+        finish();
     }
 
     @Override
@@ -197,8 +208,9 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         String s = item.getTitle().toString();
-        if (s.equals("Credits"))
-            startActivity(new Intent(WorkerActivity.this , CreditsActivity.class));
+        if (s.equals("Credits")) {
+            startActivity(new Intent(WorkerActivity.this, CreditsActivity.class));
+        }
         return super.onOptionsItemSelected(item);
     }
 

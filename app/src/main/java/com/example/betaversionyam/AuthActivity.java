@@ -1,6 +1,5 @@
 package com.example.betaversionyam;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,8 +10,9 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -61,7 +61,6 @@ public class AuthActivity extends AppCompatActivity {
     Boolean mVerificationInProgress = false;
     FirebaseUser user;
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-    ProgressDialog progressDialog;
 
 
     @Override
@@ -99,6 +98,13 @@ public class AuthActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (stayConnect) finish();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (refUsers!=null) refUsers.removeEventListener(usersListener);
+        if (ad!=null) ad.dismiss();
     }
 
     /**
@@ -170,12 +176,11 @@ public class AuthActivity extends AppCompatActivity {
     public void logOrReg(View view) {
         if (registered){
             phone = etPhone.getText().toString();
-            if (!phone.startsWith("+972")) phone = "+972" + phone;
             if (phone.isEmpty()) etPhone.setError("you must enter a phone number");
             else {
+                if (!phone.startsWith("+972")) phone = "+972" + phone;
                 startPhoneNumberVerification(phone);
                 onVerificationStateChanged();
-                ProgressDialog.show(this, "login", "connecting.. ", true);
                 AlertDialog.Builder adb = new AlertDialog.Builder(this);
                 final EditText edittext = new EditText(this);
                 edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -189,20 +194,15 @@ public class AuthActivity extends AppCompatActivity {
                             verifyPhoneNumberWithCode(mVerificationId, code);
                     }
                 });
-                adb.setNegativeButton("BACK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        if (progressDialog!=null) progressDialog.dismiss();
-                    }
-                });
                 ad = adb.create();
                 ad.show();
+                Toast.makeText(this, "the code is on his way to your phone", Toast.LENGTH_SHORT).show();
             }
         }
         else{
             name = etName.getText().toString();
             email = etEmail.getText().toString();
             phone = etPhone.getText().toString();
-            if (!phone.startsWith("+972")) phone = "+972" + phone;
             if (aSwitch.isChecked()) status = true;
             else status = false;
             isWorker = status;
@@ -211,6 +211,7 @@ public class AuthActivity extends AppCompatActivity {
             if (email.isEmpty()) etEmail.setError("you must enter an email ");
             if (phone.isEmpty()) etPhone.setError("you must enter a phone number");
             if (!name.isEmpty() && !email.isEmpty() && !phone.isEmpty()) {
+                if (!phone.startsWith("+972")) phone = "+972" + phone;
                 userdb = new Users(name, email, phone, uid, status);
                 if (status) refUsers.child("Workers").child(name).setValue(userdb);
                 else refUsers.child("Managers").child(name).setValue(userdb);
@@ -328,24 +329,39 @@ public class AuthActivity extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     if (user.getUid().equals(data.getValue(Users.class).getUid())){
                         currentUser=data.getValue(Users.class);
-                        if (progressDialog!=null) progressDialog.dismiss();
                         if (currentUser.getIsWorker()){
                             Intent si = new Intent(AuthActivity.this, WorkerActivity.class);
                             startActivity(si);
+                            finish();
                         }
                         else {
                             Intent si = new Intent(AuthActivity.this, ManagerActivity.class);
                             startActivity(si);
+                            finish();
                         }
                     }
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                if (progressDialog!=null) progressDialog.dismiss();
             }
         };
         refUsers.child("Managers").addValueEventListener(usersListener);
         refUsers.child("Workers").addValueEventListener(usersListener);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main , menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        String s = item.getTitle().toString();
+        if (s.equals("Credits")) {
+            startActivity(new Intent(AuthActivity.this, CreditsActivity.class));
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

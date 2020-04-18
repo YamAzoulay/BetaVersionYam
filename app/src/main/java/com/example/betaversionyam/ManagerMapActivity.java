@@ -26,6 +26,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import static com.example.betaversionyam.FBref.refDis;
 
@@ -51,7 +52,6 @@ public class ManagerMapActivity extends AppCompatActivity implements OnMapReadyC
     Area area;
     ArrayList<Marker> markerArrayList = new ArrayList<>();
     LatLng temp;
-    boolean isCameraAnimated  = false;
 
     /**
      * the function makes a connection between the variables in the java to the xml components,
@@ -80,7 +80,11 @@ public class ManagerMapActivity extends AppCompatActivity implements OnMapReadyC
 
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (refDis!=null) refDis.removeEventListener(disListener);
+    }
 
     /**
      * this function is called when the map is ready.
@@ -90,7 +94,8 @@ public class ManagerMapActivity extends AppCompatActivity implements OnMapReadyC
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        refDis.addListenerForSingleValueEvent(new ValueEventListener() {
+        gMap = googleMap;
+        refDis.child(name).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
@@ -104,6 +109,7 @@ public class ManagerMapActivity extends AppCompatActivity implements OnMapReadyC
                                 i++;
                             }
                             temp = latLngArrayList.get(0);
+                            if (temp!=null) gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(temp,14));
                             PolygonOptions polygonOptions = new PolygonOptions().addAll(latLngArrayList)
                                     .clickable(true);
                             polygon = gMap.addPolygon(polygonOptions);
@@ -117,6 +123,7 @@ public class ManagerMapActivity extends AppCompatActivity implements OnMapReadyC
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
+
         });
 
 
@@ -126,10 +133,12 @@ public class ManagerMapActivity extends AppCompatActivity implements OnMapReadyC
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                         latAndLng = data.getValue(LatAndLng.class);
                         if (latAndLng != null) {
-                            for (Marker marker : markerArrayList){
+                            Iterator<Marker> iterator = markerArrayList.iterator();
+                            while (iterator.hasNext()){
+                                Marker marker = iterator.next();
                                 if (marker.getTitle().equals(data.getKey())){
                                     marker.remove();
-                                    markerArrayList.remove(marker);
+                                    iterator.remove();
                                 }
                             }
                             LatLng latLng = new LatLng(latAndLng.getLat(), latAndLng.getLng());
@@ -137,10 +146,17 @@ public class ManagerMapActivity extends AppCompatActivity implements OnMapReadyC
                             markerOptions.title(data.getKey());
                             Marker marker = gMap.addMarker(markerOptions);
                             markerArrayList.add(marker);
-                            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
-                            isCameraAnimated = true;
                         }
+
                     }
+                    if (!dataSnapshot.exists()){
+                        for (Marker marker : markerArrayList){
+                                marker.remove();
+                            }
+                        markerArrayList.clear();
+                    }
+
+
                 }
 
 
@@ -151,7 +167,6 @@ public class ManagerMapActivity extends AppCompatActivity implements OnMapReadyC
             };
         refDis.child(name).child("currentLocation").addValueEventListener(disListener);
 
-        if (!isCameraAnimated) gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(temp,16));
 
     }
 }

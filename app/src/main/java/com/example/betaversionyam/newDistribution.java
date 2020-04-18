@@ -147,6 +147,7 @@ public class newDistribution extends AppCompatActivity implements Serializable {
             refDis.child(name).setValue(distribution);
             Intent t = new Intent(this, ManagerActivity.class);
             startActivity(t);
+            finish();
         }
     }
 

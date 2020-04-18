@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import static com.example.betaversionyam.FBref.refDis;
+import static com.example.betaversionyam.FBref.refUsers;
 
 /**
  * @author		Yam Azoulay
@@ -91,12 +92,19 @@ public class ManagerActivity extends AppCompatActivity  implements AdapterView.O
         refDis.addValueEventListener(disListener);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (refDis != null) refDis.removeEventListener(disListener);
+    }
+
     public void newDis(View view) {
         if (howManyActive > 0 )
             Toast.makeText(this, "only one active distribution at one time", Toast.LENGTH_SHORT).show();
         else {
             t = new Intent(this, newDistribution.class);
             startActivity(t);
+            finish();
         }
     }
 
@@ -138,6 +146,7 @@ public class ManagerActivity extends AppCompatActivity  implements AdapterView.O
                     Intent t = new Intent(ManagerActivity.this , ManagerMapActivity.class);
                     t.putExtra("name" , stringsArrayList.get(position));
                     startActivityForResult(t,111);
+                    finish();
                 }
             });
         }
@@ -154,8 +163,9 @@ public class ManagerActivity extends AppCompatActivity  implements AdapterView.O
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         String s = item.getTitle().toString();
-        if (s.equals("Credits"))
-            startActivity(new Intent(ManagerActivity.this , CreditsActivity.class));
+        if (s.equals("Credits")) {
+            startActivity(new Intent(ManagerActivity.this, CreditsActivity.class));
+        }
         return super.onOptionsItemSelected(item);
     }
 }
