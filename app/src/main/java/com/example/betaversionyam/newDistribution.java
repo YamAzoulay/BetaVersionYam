@@ -46,6 +46,8 @@ public class newDistribution extends AppCompatActivity implements Serializable {
     Area area;
     Distribution distribution;
     Button mapButton;
+    char[] invalidChars = new char[6];
+
 
 
     @Override
@@ -61,6 +63,14 @@ public class newDistribution extends AppCompatActivity implements Serializable {
         tvTextDate = findViewById(R.id.tvTextDate);
         tvTextTime = findViewById(R.id.tvTextTime);
         tvMap = findViewById(R.id.textViewMap);
+
+        invalidChars[0] = '.';
+        invalidChars[1] = '$';
+        invalidChars[2] = '#';
+        invalidChars[3] = '[';
+        invalidChars[4] = ']';
+        invalidChars[5] = '/';
+
 
         calendar = Calendar.getInstance();
         setDate();
@@ -169,8 +179,10 @@ public class newDistribution extends AppCompatActivity implements Serializable {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (data != null && requestCode == 100) {
             SelectedUsersList = data.getStringArrayListExtra("selectedWorkers");
-            sumUsers = SelectedUsersList.size();
-            textViewSumUsers.setText("" + sumUsers);
+            if (SelectedUsersList!=null) {
+                sumUsers = SelectedUsersList.size();
+                textViewSumUsers.setText("" + sumUsers);
+            }
         }
         if (data != null && requestCode == 200) {
             latAndLngArrayList = (ArrayList<LatAndLng>) data.getExtras().getSerializable("selectedArea");
@@ -185,18 +197,36 @@ public class newDistribution extends AppCompatActivity implements Serializable {
      * this function checks if the manager entered all of the details that required to open a new distribution.
      */
     public boolean checkInput(){
-        if (name.isEmpty()) editText.setError("select a name");
-        else
-            if (SelectedUsersList.isEmpty()) Toast.makeText(this, "you must select workers", Toast.LENGTH_SHORT).show();
-            else
-                if (selectedTime==null) tvTextTime.setError("you must select time");
-                else
-                    if (dayAndMonth==null) tvTextDate.setError("you must select date");
-                    else
-                        if (latAndLngArrayList == null)
-                        Toast.makeText(this, "you must select an area", Toast.LENGTH_SHORT).show();
-                        else return true;
-        return false;
+        boolean ok = true;
+        for (char invalidChar : invalidChars) {
+            if (name.contains(Character.toString(invalidChar))) {
+                editText.setError("Invalid Character.");
+                ok=false;
+                break;
+            }
+        }
+        if (name.isEmpty()) {
+            editText.setError("select a name");
+            ok=false;
+        }
+        if (SelectedUsersList.isEmpty()) {
+            Toast.makeText(this, "you must select workers", Toast.LENGTH_SHORT).show();
+            ok = false;
+        }
+        if (selectedTime==null) {
+            tvTextTime.setError("you must select time");
+            ok = false;
+        }
+        if (dayAndMonth==null) {
+            tvTextDate.setError("you must select date");
+            ok=false;
+        }
+        if (latAndLngArrayList == null){
+            Toast.makeText(this, "you must select an area", Toast.LENGTH_SHORT).show();
+            ok=false;
+        }
+
+        return ok;
     }
 
 

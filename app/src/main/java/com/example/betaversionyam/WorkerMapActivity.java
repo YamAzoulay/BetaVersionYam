@@ -122,10 +122,15 @@ public class WorkerMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public void onPause() {
-        locationManager.removeUpdates(this);
         if (isCurrenLoc)
             refDis.child(name).child("currentLocation").child(workerName).removeValue();
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        locationManager.removeUpdates(this);
+        super.onDestroy();
     }
 
     /**
@@ -191,12 +196,5 @@ public class WorkerMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public void onProviderDisabled(String provider) {
-    }
-
-    public void back(View view) {
-        locationManager.removeUpdates(this);
-        if (isCurrenLoc)
-            refDis.child(name).child("currentLocation").child(workerName).removeValue();
-        finish();
     }
 }

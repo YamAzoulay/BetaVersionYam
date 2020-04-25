@@ -168,5 +168,5 @@ public class ManagerMapActivity extends AppCompatActivity implements OnMapReadyC
         refDis.child(name).child("currentLocation").addValueEventListener(disListener);
 
 
-    }
+        }
 }

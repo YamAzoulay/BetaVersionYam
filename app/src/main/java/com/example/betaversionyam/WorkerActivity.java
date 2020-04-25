@@ -40,11 +40,11 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
     ArrayList<String> stringsArrayList = new ArrayList<>();
     Distribution distribution;
     ArrayAdapter adp;
-    String phoneOfUser, nameOfDistribution;
+    String uidOfUser, nameOfDistribution;
     public static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     Users currentUser;
     String workerName;
-    int isDisFound = 0;
+    boolean isDisFound = false;
 
     /**
      * the function makes a connection between the variables in the java to the xml components
@@ -58,13 +58,13 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
         listView.setOnItemClickListener(this);
 
         FirebaseUser user = mAuth.getCurrentUser();
-        phoneOfUser = user.getPhoneNumber();
+        uidOfUser = user.getUid();
 
         usersListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    if (phoneOfUser.equals(data.getValue(Users.class).getPhone())) {
+                    if (uidOfUser.equals(data.getValue(Users.class).getUid())) {
                         currentUser = data.getValue(Users.class);
                         workerName = currentUser.getName();
                     }
@@ -77,10 +77,7 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             distribution = data.getValue(Distribution.class);
                             nameOfDistribution = data.getKey();
-                            if (currentUser == null){
-                                Toast.makeText(WorkerActivity.this, "null", Toast.LENGTH_SHORT).show();
-                            }
-                            else
+                            if (currentUser != null)
                             if ((distribution.getSelectedUsersList().contains(currentUser.getName()))
                                     && (!distribution.isActive())) {
                                 distributionArrayList.add(distribution);
@@ -152,24 +149,20 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     distribution = data.getValue(Distribution.class);
-                    if (currentUser == null){
-                        Toast.makeText(WorkerActivity.this, "no distributions found", Toast.LENGTH_SHORT).show();
-                    }
-                    else
+                    if (currentUser != null)
                     if ((distribution != null && distribution.getSelectedUsersList().contains(currentUser.getName()))
                             && (distribution.isActive())) {
+                        isDisFound = true;
                         ActiveDistribution(distribution);
-                        isDisFound = 1;
                     }
                 }
-                if (isDisFound!=1) Toast.makeText(WorkerActivity.this, "", Toast.LENGTH_SHORT).show();
+                if (!isDisFound) Toast.makeText(WorkerActivity.this, "no distributions was found", Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         };
         refDis.addValueEventListener(disListener);
-
     }
 
 
@@ -180,8 +173,6 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
      * @param distribution an active distribution that includes the current worker.
      */
     public void ActiveDistribution(Distribution distribution) {
-        if (usersListener!=null) refUsers.removeEventListener(usersListener);
-        if (disListener!=null) refDis.removeEventListener(disListener);
         ArrayList<String> stringsArrayList = distribution.getSelectedUsersList();
         String name = distribution.getName();
         String dateAndTime = distribution.getDateAndTime();

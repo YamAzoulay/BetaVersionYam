@@ -49,10 +49,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[]
                     {Manifest.permission.ACCESS_FINE_LOCATION}, 101);
-            Toast.makeText(this, "you must allow the permission", Toast.LENGTH_SHORT).show();
-            return;
+            Toast.makeText(this, "you must allow the permission", Toast.LENGTH_LONG).show();
         }
-
         else{
             SupportMapFragment supportMapFragment = (SupportMapFragment)
                     getSupportFragmentManager().findFragmentById(R.id.map);
@@ -92,8 +90,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public void drawPolygon(View view) {
         if (polygon!=null) polygon.remove();
-        if (latLngList != null) {
-            ArrayList<LatLng> copy = (ArrayList) latLngList.clone();
+        if (!latLngList.isEmpty()) {
+            ArrayList copy = (ArrayList) latLngList.clone();
             PolygonOptions polygonOptions = new PolygonOptions().addAll(copy)
                     .clickable(true);
             polygon = gMap.addPolygon(polygonOptions);

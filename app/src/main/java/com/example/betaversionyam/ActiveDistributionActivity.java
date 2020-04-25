@@ -36,13 +36,13 @@ public class ActiveDistributionActivity extends AppCompatActivity {
         tvTime = findViewById(R.id.tvTime1);
         tvSelectedUsers = findViewById(R.id.tvSelectedUsers);
         tvActive = findViewById(R.id.textViewActive);
-        Initialing();
+        Initiating();
     }
 
     /**
      * the function reads all the info that was sent from the worker activity and displays it in the right text view.
      */
-    private void Initialing() {
+    private void Initiating() {
         back = getIntent();
         if (back == null) Toast.makeText(this, "no distribution was found", Toast.LENGTH_SHORT).show();
         else {

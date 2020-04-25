@@ -61,6 +61,8 @@ public class AuthActivity extends AppCompatActivity {
     Boolean mVerificationInProgress = false;
     FirebaseUser user;
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
+    char[] invalidChars = new char[6];
+
 
 
     @Override
@@ -78,6 +80,15 @@ public class AuthActivity extends AppCompatActivity {
         aSwitch = findViewById(R.id.switch1);
         stayConnect = false;
         registered = false;
+
+        invalidChars[0] = '.';
+        invalidChars[1] = '$';
+        invalidChars[2] = '#';
+        invalidChars[3] = '[';
+        invalidChars[4] = ']';
+        invalidChars[5] = '/';
+
+
 
         onVerificationStateChanged();
         regOption();
@@ -210,14 +221,20 @@ public class AuthActivity extends AppCompatActivity {
             if (name.isEmpty()) etName.setError("you must enter a name");
             if (email.isEmpty()) etEmail.setError("you must enter an email ");
             if (phone.isEmpty()) etPhone.setError("you must enter a phone number");
-            if (!name.isEmpty() && !email.isEmpty() && !phone.isEmpty()) {
-                if (!phone.startsWith("+972")) phone = "+972" + phone;
-                userdb = new Users(name, email, phone, uid, status);
-                if (status) refUsers.child("Workers").child(name).setValue(userdb);
-                else refUsers.child("Managers").child(name).setValue(userdb);
-                logOption();
+            for (char invalidChar : invalidChars) {
+                if (name.contains(Character.toString(invalidChar))) {
+                    etName.setError("Invalid Character.");
+                    break;
+                }
             }
-        }
+                if (!name.isEmpty() && !email.isEmpty() && !phone.isEmpty()) {
+                    if (!phone.startsWith("+972")) phone = "+972" + phone;
+                    userdb = new Users(name, email, phone, uid, status);
+                    if (status) refUsers.child("Workers").child(name).setValue(userdb);
+                    else refUsers.child("Managers").child(name).setValue(userdb);
+                    logOption();
+                }
+            }
     }
 
     /**
@@ -303,8 +320,10 @@ public class AuthActivity extends AppCompatActivity {
                 Log.w(TAG, "onVerificationFailed", e);
                 mVerificationInProgress = false;
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    etCode.setError("Invalid phone number.");
-                } else if (e instanceof FirebaseTooManyRequestsException) { }
+                    Toast.makeText(AuthActivity.this, "Invalid phone number or code.", Toast.LENGTH_SHORT).show();
+                } else if (e instanceof FirebaseTooManyRequestsException) {
+                    Toast.makeText(AuthActivity.this, "Please try again later", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override

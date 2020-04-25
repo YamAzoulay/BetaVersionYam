@@ -28,21 +28,38 @@
         android:layout_weight="0.1"
         android:orientation="horizontal">
 
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1" />
+
         <Button
             android:id="@+id/getBack"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="#8BFABD"
             android:onClick="getBack"
             android:text="get Back" />
 
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3" />
+
         <Button
             android:id="@+id/select"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="#8BFABD"
             android:onClick="select"
             android:text="select" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1" />
     </LinearLayout>
 
 </LinearLayout>
