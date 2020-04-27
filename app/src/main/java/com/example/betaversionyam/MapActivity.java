@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -46,16 +47,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[]
                     {Manifest.permission.ACCESS_FINE_LOCATION}, 101);
-            Toast.makeText(this, "you must allow the permission", Toast.LENGTH_LONG).show();
         }
-        else{
-            SupportMapFragment supportMapFragment = (SupportMapFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.map);
-            supportMapFragment.getMapAsync(MapActivity.this);
-        }
+        SupportMapFragment supportMapFragment = (SupportMapFragment)
+                getSupportFragmentManager().findFragmentById(R.id.map);
+        supportMapFragment.getMapAsync(MapActivity.this);
 
     }
 
@@ -126,4 +126,5 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             finish();
         }
     }
+    
 }

@@ -55,40 +55,41 @@ public class ManagerMapActivity extends AppCompatActivity implements OnMapReadyC
 
     /**
      * the function makes a connection between the variables in the java to the xml components,
-     *  asks for permissions and initialize the map.
-     * */
+     * asks for permissions and initialize the map.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manager_map);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+        SupportMapFragment supportMapFragment = (SupportMapFragment)
+                getSupportFragmentManager().findFragmentById(R.id.managerMap);
+        supportMapFragment.getMapAsync(ManagerMapActivity.this);
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]
                     {Manifest.permission.ACCESS_FINE_LOCATION}, 101);
-            Toast.makeText(this, "you must allow the permission", Toast.LENGTH_SHORT).show();
-            return;
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+            finish();
         }
 
-       else{
-            SupportMapFragment supportMapFragment = (SupportMapFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.managerMap);
-            supportMapFragment.getMapAsync(ManagerMapActivity.this);
-        }
-
-        back=getIntent();
-        if (back!=null) name=back.getStringExtra("name");
+        back = getIntent();
+        if (back != null) name = back.getStringExtra("name");
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (refDis!=null) refDis.removeEventListener(disListener);
+        if (refDis != null) refDis.removeEventListener(disListener);
     }
 
     /**
      * this function is called when the map is ready.
      * the function creates the same polygon as the manager created and shows the current location of all the workers.
+     *
      * @param googleMap the displayed map.
      */
     @Override
@@ -109,7 +110,8 @@ public class ManagerMapActivity extends AppCompatActivity implements OnMapReadyC
                                 i++;
                             }
                             temp = latLngArrayList.get(0);
-                            if (temp!=null) gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(temp,14));
+                            if (temp != null)
+                                gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(temp, 14));
                             PolygonOptions polygonOptions = new PolygonOptions().addAll(latLngArrayList)
                                     .clickable(true);
                             polygon = gMap.addPolygon(polygonOptions);
@@ -131,42 +133,40 @@ public class ManagerMapActivity extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        latAndLng = data.getValue(LatAndLng.class);
-                        if (latAndLng != null) {
-                            Iterator<Marker> iterator = markerArrayList.iterator();
-                            while (iterator.hasNext()){
-                                Marker marker = iterator.next();
-                                if (marker.getTitle().equals(data.getKey())){
-                                    marker.remove();
-                                    iterator.remove();
-                                }
-                            }
-                            LatLng latLng = new LatLng(latAndLng.getLat(), latAndLng.getLng());
-                            MarkerOptions markerOptions = new MarkerOptions().position(latLng);
-                            markerOptions.title(data.getKey());
-                            Marker marker = gMap.addMarker(markerOptions);
-                            markerArrayList.add(marker);
-                        }
-
-                    }
-                    if (!dataSnapshot.exists()){
-                        for (Marker marker : markerArrayList){
+                    latAndLng = data.getValue(LatAndLng.class);
+                    if (latAndLng != null) {
+                        Iterator<Marker> iterator = markerArrayList.iterator();
+                        while (iterator.hasNext()) {
+                            Marker marker = iterator.next();
+                            if (marker.getTitle().equals(data.getKey())) {
                                 marker.remove();
+                                iterator.remove();
                             }
-                        markerArrayList.clear();
+                        }
+                        LatLng latLng = new LatLng(latAndLng.getLat(), latAndLng.getLng());
+                        MarkerOptions markerOptions = new MarkerOptions().position(latLng);
+                        markerOptions.title(data.getKey());
+                        Marker marker = gMap.addMarker(markerOptions);
+                        markerArrayList.add(marker);
                     }
 
-
+                }
+                if (!dataSnapshot.exists()) {
+                    for (Marker marker : markerArrayList) {
+                        marker.remove();
+                    }
+                    markerArrayList.clear();
                 }
 
 
-                @Override
-                public void onCancelled (@NonNull DatabaseError databaseError){
+            }
 
-                }
-            };
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
         refDis.child(name).child("currentLocation").addValueEventListener(disListener);
-
-
-        }
+    }
 }

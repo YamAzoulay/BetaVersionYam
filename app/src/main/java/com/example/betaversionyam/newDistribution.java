@@ -187,7 +187,7 @@ public class newDistribution extends AppCompatActivity implements Serializable {
         if (data != null && requestCode == 200) {
             latAndLngArrayList = (ArrayList<LatAndLng>) data.getExtras().getSerializable("selectedArea");
             area = new Area(latAndLngArrayList);
-            if (latAndLngArrayList!=null)
+            if (latAndLngArrayList!=null && !latAndLngArrayList.isEmpty() )
                 tvMap.setText("successful");
         }
         super.onActivityResult(requestCode, resultCode, data);
