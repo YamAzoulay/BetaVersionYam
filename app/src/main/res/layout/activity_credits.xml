@@ -38,7 +38,7 @@
         android:layout_height="0dp"
         android:layout_weight="0.5"
         android:gravity="center"
-        android:text="Thanks to: Albert Levy and Yitzhak Ben Shitrit, computre sience teachers"
+        android:text="Thanks to: Albert Levy and Yitzhak Ben Shitrit, computer science teachers"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="#000000" />
 
