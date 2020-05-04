@@ -186,8 +186,8 @@ public class WorkerActivity extends AppCompatActivity implements AdapterView.OnI
         t.putExtra("area", latAndLngs);
         t.putExtra("isActive" , isActive);
         t.putExtra("workerName" , workerName);
+        refDis.removeEventListener(disListener);
         startActivityForResult(t, 500);
-        finish();
     }
 
     @Override
